@@ -1,3 +1,4 @@
+import gleam/regexp
 import gleam/string
 import util/input
 import gleam/io
@@ -34,24 +35,21 @@ fn parse(inp: String) -> Result(List(Int), Nil) {
 }
 
 fn part1(input: List(Int)) -> Int {
+  let assert Ok(re) = regexp.from_string("^(.+)\\1$")
   input
   |> list.filter(fn (id) {
     let id_str = int.to_string(id)
-    let l = string.length(id_str)
-    l % 2 == 0 && string.drop_end(id_str, l/2) == string.drop_start(id_str, l/2)
+    regexp.check(re, id_str)
   })
   |> list.fold(0, fn (a, b) { a + b })
 }
 
 fn part2(input: List(Int)) -> Int {
+  let assert Ok(re) = regexp.from_string("^(.+)\\1+$")
   input
   |> list.filter(fn (id) {
     let id_str = int.to_string(id)
-
-    {id_str <> id_str}
-    |> string.drop_start(1)
-    |> string.drop_end(1)
-    |> string.contains(id_str)
+    regexp.check(re, id_str)
   })
   |> list.fold(0, fn (a, b) { a + b })
 }
